@@ -9,6 +9,7 @@ import { TransactionList } from "@/components/dashboard/transaction-list";
 import { BudgetSummary } from "@/components/dashboard/budget-summary";
 import { SpendingPieChart } from "@/components/dashboard/spending-pie-chart";
 import { IncomeExpenseBarChart } from "@/components/dashboard/income-expense-bar-chart";
+import { BudgetVsActualChart } from "@/components/dashboard/budget-vs-actual-chart"; // Import new chart
 import { AIInsightsSection } from "@/components/dashboard/ai-insights-section";
 import { useTransactions } from "@/hooks/use-transactions";
 import { useAuth } from "@/contexts/auth-context";
@@ -51,7 +52,7 @@ export default function DashboardPage() {
     );
   }
   
-  if (transactionsLoading) {
+  if (transactionsLoading) { // Keep this skeleton for initial transaction load
     return (
       <DashboardLayout>
         <div className="container mx-auto p-4 md:p-6 space-y-6">
@@ -67,7 +68,8 @@ export default function DashboardPage() {
             </div>
             <div className="lg:col-span-2 space-y-6">
               <Skeleton className="h-[600px] w-full" /> 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Skeleton className="h-96 w-full mt-6" /> {/* Placeholder for new chart */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                 <Skeleton className="h-80 w-full" /> 
                 <Skeleton className="h-80 w-full" /> 
               </div>
@@ -99,7 +101,7 @@ export default function DashboardPage() {
 
           <div className="lg:col-span-2 space-y-6">
             <TransactionList transactions={transactions} deleteTransaction={deleteTransaction} />
-            
+            <BudgetVsActualChart transactions={transactions} /> {/* Added new chart component */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <SpendingPieChart transactions={transactions} />
               <IncomeExpenseBarChart transactions={transactions} />
