@@ -3,7 +3,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { LogIn, LogOut, UserPlus, UserCircle } from 'lucide-react';
+import { LogIn, LogOut, UserPlus } from 'lucide-react';
 import { Logo } from '@/components/logo';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/auth-context';
@@ -15,10 +15,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { SidebarTrigger } from '@/components/ui/sidebar'; // Added
 
+export interface AppHeaderProps {
+  showSidebarTrigger?: boolean;
+}
 
-export function AppHeader() {
+export function AppHeader({ showSidebarTrigger = false }: AppHeaderProps) {
   const { user, logOut, loading } = useAuth();
   const router = useRouter();
 
@@ -33,18 +37,22 @@ export function AppHeader() {
   }
 
   return (
-    <header className="py-4 px-4 md:px-6 sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="py-4 px-4 md:px-6 sticky top-0 z-40 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex items-center justify-between">
-        <Logo />
+        <div className="flex items-center gap-2">
+          {showSidebarTrigger && <SidebarTrigger />}
+          <Logo />
+        </div>
         <nav className="flex items-center gap-2">
           {loading ? (
-            <div className="h-8 w-20 animate-pulse bg-muted rounded-md"></div>
+            <div className="h-10 w-20 animate-pulse bg-muted rounded-md flex items-center justify-center">
+               <div className="h-8 w-8 bg-muted-foreground/20 rounded-full"></div>
+            </div>
           ) : user ? (
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="relative h-10 w-10 rounded-full">
                   <Avatar className="h-9 w-9">
-                    {/* Placeholder for user image if available */}
                     {/* <AvatarImage src={user.photoURL || undefined} alt={user.displayName || user.email || "User"} /> */}
                     <AvatarFallback className="bg-primary text-primary-foreground">
                       {getInitials(user.email)}

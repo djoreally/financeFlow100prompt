@@ -3,7 +3,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { AppHeader } from "@/components/layout/app-header";
+import { DashboardLayout } from "@/components/layout/dashboard-layout"; // Changed
 import { TransactionForm } from "@/components/dashboard/transaction-form";
 import { TransactionList } from "@/components/dashboard/transaction-list";
 import { BudgetSummary } from "@/components/dashboard/budget-summary";
@@ -14,6 +14,7 @@ import { useTransactions } from "@/hooks/use-transactions";
 import { useAuth } from "@/contexts/auth-context";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { AppHeader } from "@/components/layout/app-header"; // Keep for pre-auth skeleton
 
 export default function DashboardPage() {
   const { user, loading: authLoading } = useAuth();
@@ -27,11 +28,10 @@ export default function DashboardPage() {
   }, [user, authLoading, router]);
 
   if (authLoading || (!user && !authLoading)) {
-    // Show a simplified full-page skeleton if auth is loading or redirect is imminent
     return (
       <>
-        <AppHeader />
-        <main className="flex-1 container mx-auto p-4 md:p-6 space-y-6">
+        <AppHeader /> {/* Use AppHeader for non-dashboard layout skeleton */}
+        <div className="flex-1 container mx-auto p-4 md:p-6 space-y-6 mt-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Skeleton className="h-20 w-full" />
             <Skeleton className="h-20 w-full" />
@@ -46,77 +46,69 @@ export default function DashboardPage() {
               <Skeleton className="h-[600px] w-full" />
             </div>
           </div>
-        </main>
+        </div>
       </>
     );
   }
   
   // At this point, user is authenticated. Now check transactions loading.
+  // This skeleton will be inside DashboardLayout if transactions are loading
   if (transactionsLoading) {
     return (
-      <>
-        <AppHeader />
-        <main className="flex-1 container mx-auto p-4 md:p-6 space-y-6">
-          {/* BudgetSummary Skeletons */}
+      <DashboardLayout>
+        <div className="container mx-auto p-4 md:p-6 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Skeleton className="h-20 w-full" />
             <Skeleton className="h-20 w-full" />
             <Skeleton className="h-20 w-full" />
           </div>
-          {/* Main content grid skeletons */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
             <div className="lg:col-span-1 space-y-6">
-              <Skeleton className="h-96 w-full" /> {/* TransactionForm Skeleton */}
-              <Skeleton className="h-64 w-full" /> {/* AIInsights Skeleton */}
+              <Skeleton className="h-96 w-full" /> 
+              <Skeleton className="h-64 w-full" /> 
             </div>
             <div className="lg:col-span-2 space-y-6">
-              <Skeleton className="h-[600px] w-full" /> {/* TransactionList Skeleton */}
+              <Skeleton className="h-[600px] w-full" /> 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Skeleton className="h-80 w-full" /> {/* SpendingPieChart Skeleton */}
-                <Skeleton className="h-80 w-full" /> {/* IncomeExpenseBarChart Skeleton */}
-              </div>
-            </div>
-          </div>
-        </main>
-      </>
-    );
-  }
-
-  return (
-    <div className="flex flex-col min-h-screen">
-      <AppHeader />
-      <main className="flex-1">
-        <div className="container mx-auto p-4 md:p-6 space-y-8">
-          <BudgetSummary transactions={transactions} />
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-            <div className="lg:col-span-1 space-y-6">
-              <Card className="shadow-lg">
-                <CardHeader>
-                  <CardTitle>Add New Transaction</CardTitle>
-                  <CardDescription>Log your income or expenses.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <TransactionForm addTransaction={addTransaction} />
-                </CardContent>
-              </Card>
-              <AIInsightsSection transactions={transactions} />
-            </div>
-
-            <div className="lg:col-span-2 space-y-6">
-              <TransactionList transactions={transactions} deleteTransaction={deleteTransaction} />
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <SpendingPieChart transactions={transactions} />
-                <IncomeExpenseBarChart transactions={transactions} />
+                <Skeleton className="h-80 w-full" /> 
+                <Skeleton className="h-80 w-full" /> 
               </div>
             </div>
           </div>
         </div>
-      </main>
-      <footer className="py-6 text-center text-sm text-muted-foreground border-t">
-        © {new Date().getFullYear()} Finance Flow. All rights reserved.
-      </footer>
-    </div>
+      </DashboardLayout>
+    );
+  }
+
+  return (
+    <DashboardLayout> {/* Wrap content with DashboardLayout */}
+      <div className="container mx-auto p-4 md:p-6 space-y-8">
+        <BudgetSummary transactions={transactions} />
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+          <div className="lg:col-span-1 space-y-6">
+            <Card className="shadow-lg">
+              <CardHeader>
+                <CardTitle>Add New Transaction</CardTitle>
+                <CardDescription>Log your income or expenses.</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <TransactionForm addTransaction={addTransaction} />
+              </CardContent>
+            </Card>
+            <AIInsightsSection transactions={transactions} />
+          </div>
+
+          <div className="lg:col-span-2 space-y-6">
+            <TransactionList transactions={transactions} deleteTransaction={deleteTransaction} />
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <SpendingPieChart transactions={transactions} />
+              <IncomeExpenseBarChart transactions={transactions} />
+            </div>
+          </div>
+        </div>
+      </div>
+    </DashboardLayout>
   );
 }
