@@ -28,11 +28,11 @@ interface IncomeExpenseBarChartProps {
 const chartConfig = {
   income: {
     label: "Income",
-    color: "hsl(var(--chart-2))", // Using accent color for income
+    color: "hsl(var(--chart-2))", 
   },
   expenses: {
     label: "Expenses",
-    color: "hsl(var(--chart-1))", // Using primary color for expenses
+    color: "hsl(var(--chart-1))", 
   },
 } satisfies ChartConfig
 
@@ -56,12 +56,12 @@ export function IncomeExpenseBarChart({ transactions }: IncomeExpenseBarChartPro
       month,
       ...data,
     }))
-    .sort((a,b) => parseISO(format(parseISO(`01 ${a.month}`), 'yyyy-MM-dd')) - parseISO(format(parseISO(`01 ${b.month}`), 'yyyy-MM-dd'))); // Sort by month
+    .sort((a,b) => parseISO(format(parseISO(`01 ${a.month}`), 'yyyy-MM-dd')).getTime() - parseISO(format(parseISO(`01 ${b.month}`), 'yyyy-MM-dd')).getTime());
 
 
   if (transactions.length === 0) {
      return (
-      <Card className="shadow-lg">
+      <Card className="shadow-lg card-print">
         <CardHeader>
           <CardTitle>Monthly Income vs Expenses</CardTitle>
           <CardDescription>Comparison of total income and expenses per month.</CardDescription>
@@ -75,12 +75,12 @@ export function IncomeExpenseBarChart({ transactions }: IncomeExpenseBarChartPro
 
 
   return (
-    <Card className="shadow-lg">
+    <Card className="shadow-lg card-print">
       <CardHeader>
         <CardTitle>Monthly Income vs Expenses</CardTitle>
         <CardDescription>Comparison of total income and expenses per month</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="chart-print-container">
         <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={chartData} margin={{ top: 5, right: 20, left: -20, bottom: 5 }}>
@@ -90,7 +90,6 @@ export function IncomeExpenseBarChart({ transactions }: IncomeExpenseBarChartPro
                 tickLine={false}
                 tickMargin={10}
                 axisLine={false}
-                // tickFormatter={(value) => value.slice(0, 3)}
               />
               <YAxis tickFormatter={(value) => `$${value}`} />
               <ChartTooltip

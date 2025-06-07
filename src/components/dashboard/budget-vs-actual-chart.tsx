@@ -33,13 +33,13 @@ interface BudgetVsActualChartProps {
 const chartConfig = {
   budget: {
     label: "Budget",
-    color: "hsl(var(--chart-3))", // Muted color for budget
+    color: "hsl(var(--chart-3))", 
   },
   actual: {
     label: "Actual Spending",
-    color: "hsl(var(--chart-1))", // Primary color for actual
+    color: "hsl(var(--chart-1))", 
   },
-  overBudget: { // Special color for actual when over budget
+  overBudget: { 
     label: "Actual (Over Budget)",
     color: "hsl(var(--destructive))",
   }
@@ -78,14 +78,14 @@ export function BudgetVsActualChart({ transactions }: BudgetVsActualChartProps) 
         actual: actualSpending,
         fillActual: actualSpending > budgetAmount ? 'var(--color-overBudget)' : 'var(--color-actual)',
       };
-    }).sort((a,b) => (b.actual / b.budget) - (a.actual / a.budget)); // Sort by percentage of budget spent
+    }).sort((a,b) => (b.actual / (b.budget || 1)) - (a.actual / (a.budget || 1))); // Sort by percentage of budget spent, avoid division by zero
 
     setChartData(data);
   }, [allCategories, budgets, transactions, categoriesLoading, budgetsLoading]);
 
   if (categoriesLoading || budgetsLoading) {
     return (
-      <Card className="shadow-lg">
+      <Card className="shadow-lg card-print">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Target className="h-6 w-6 text-primary" />
@@ -102,7 +102,7 @@ export function BudgetVsActualChart({ transactions }: BudgetVsActualChartProps) 
 
   if (chartData.length === 0) {
     return (
-      <Card className="shadow-lg">
+      <Card className="shadow-lg card-print">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Target className="h-6 w-6 text-primary" />
@@ -121,7 +121,7 @@ export function BudgetVsActualChart({ transactions }: BudgetVsActualChartProps) 
   }
 
   return (
-    <Card className="shadow-lg">
+    <Card className="shadow-lg card-print">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Target className="h-6 w-6 text-primary" />
@@ -131,7 +131,7 @@ export function BudgetVsActualChart({ transactions }: BudgetVsActualChartProps) 
           Comparison of budgeted amounts vs. actual spending for your expense categories this month.
         </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="chart-print-container">
         <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={chartData} margin={{ top: 5, right: 20, left: -20, bottom: 5 }}>
@@ -141,9 +141,7 @@ export function BudgetVsActualChart({ transactions }: BudgetVsActualChartProps) 
                 tickLine={false}
                 tickMargin={10}
                 axisLine={false}
-                interval={0} // Show all category names
-                // Angled ticks if too many categories, or truncate
-                // tickFormatter={(value) => value.length > 10 ? `${value.substring(0,8)}...` : value} 
+                interval={0} 
               />
               <YAxis tickFormatter={(value) => `$${value}`} />
               <ChartTooltip
@@ -169,7 +167,6 @@ export function BudgetVsActualChart({ transactions }: BudgetVsActualChartProps) 
               />
               <ChartLegend content={<ChartLegendContent />} />
               <Bar dataKey="budget" fill="var(--color-budget)" radius={4} />
-              {/* For actual, we need to map fill based on overspending */}
               {chartData.map((entry, index) => (
                 <Bar key={`actual-${index}`} dataKey="actual" name="actual" fill={entry.fillActual} radius={4}  stackId="a" data={[entry]}/>
               ))}

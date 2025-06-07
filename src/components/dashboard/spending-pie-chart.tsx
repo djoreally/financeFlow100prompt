@@ -2,10 +2,10 @@
 "use client"
 
 import * as React from "react"
-import { Pie, PieChart, Cell } from "recharts"
+import { Pie, PieChart, Cell, ResponsiveContainer } from "recharts" // Added ResponsiveContainer
 import type { Transaction } from "@/lib/types"
-import { useCategories } from "@/hooks/use-categories"; // Import useCategories
-import { Shapes } from "lucide-react"; // Default icon
+import { useCategories } from "@/hooks/use-categories"; 
+import { Shapes } from "lucide-react"; 
 
 import {
   Card,
@@ -59,7 +59,7 @@ export function SpendingPieChart({ transactions }: SpendingPieChartProps) {
 
   if (categoriesLoading) {
     return (
-      <Card className="shadow-lg">
+      <Card className="shadow-lg card-print">
         <CardHeader>
           <CardTitle>Expense Breakdown</CardTitle>
           <CardDescription>Distribution of expenses by category.</CardDescription>
@@ -75,7 +75,7 @@ export function SpendingPieChart({ transactions }: SpendingPieChartProps) {
 
   if (expenseTransactions.length === 0) {
     return (
-      <Card className="shadow-lg">
+      <Card className="shadow-lg card-print">
         <CardHeader>
           <CardTitle>Expense Breakdown</CardTitle>
           <CardDescription>Distribution of expenses by category.</CardDescription>
@@ -88,37 +88,42 @@ export function SpendingPieChart({ transactions }: SpendingPieChartProps) {
   }
 
   return (
-    <Card className="flex flex-col shadow-lg">
+    <Card className="flex flex-col shadow-lg card-print">
       <CardHeader className="items-center pb-0">
         <CardTitle>Expense Breakdown</CardTitle>
         <CardDescription>Distribution of expenses by category</CardDescription>
       </CardHeader>
-      <CardContent className="flex-1 pb-0">
+      <CardContent className="flex-1 pb-0 chart-print-container">
         <ChartContainer
           config={chartConfig}
-          className="mx-auto aspect-square max-h-[300px]"
+          className="mx-auto aspect-square max-h-[300px] w-full" // Ensure w-full for ResponsiveContainer
         >
-          <PieChart>
-            <ChartTooltip
-              cursor={false}
-              content={<ChartTooltipContent hideLabel />}
-            />
-            <Pie
-              data={chartData}
-              dataKey="value"
-              nameKey="name"
-              innerRadius={60}
-              strokeWidth={2}
-            >
-              {chartData.map((entry, index) => (
-                <Cell key={`cell-${index}`} fill={entry.fill} />
-              ))}
-            </Pie>
-             <ChartLegend
-              content={<ChartLegendContent nameKey="name" />}
-              className="-translate-y-2 flex-wrap gap-2 [&>*]:basis-1/4 [&>*]:justify-center"
-            />
-          </PieChart>
+          <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+              <ChartTooltip
+                cursor={false}
+                content={<ChartTooltipContent hideLabel />}
+              />
+              <Pie
+                data={chartData}
+                dataKey="value"
+                nameKey="name"
+                innerRadius="30%" // Adjusted for better responsiveness
+                outerRadius="70%" // Adjusted for better responsiveness
+                strokeWidth={2}
+                labelLine={false} // Optionally hide label lines if too cluttered
+                // label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`} // Example label
+              >
+                {chartData.map((entry, index) => (
+                  <Cell key={`cell-${index}`} fill={entry.fill} />
+                ))}
+              </Pie>
+              <ChartLegend
+                content={<ChartLegendContent nameKey="name" />}
+                className="-translate-y-2 flex-wrap gap-1 [&>*]:basis-[45%] [&>*]:justify-center md:[&>*]:basis-1/4" // Adjusted for better wrapping
+              />
+            </PieChart>
+          </ResponsiveContainer>
         </ChartContainer>
       </CardContent>
     </Card>

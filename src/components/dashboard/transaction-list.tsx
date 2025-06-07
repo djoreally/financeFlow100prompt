@@ -61,7 +61,7 @@ export function TransactionList({ transactions, deleteTransaction }: Transaction
 
   if (transactions.length === 0) {
     return (
-      <Card className="shadow-lg">
+      <Card className="shadow-lg card-print">
         <CardHeader>
           <CardTitle>Recent Transactions</CardTitle>
           <CardDescription>All your income and expense entries will appear here.</CardDescription>
@@ -75,7 +75,7 @@ export function TransactionList({ transactions, deleteTransaction }: Transaction
   
   if (categoriesLoading) {
     return (
-      <Card className="shadow-lg">
+      <Card className="shadow-lg card-print">
         <CardHeader>
           <CardTitle>Recent Transactions</CardTitle>
         </CardHeader>
@@ -87,13 +87,13 @@ export function TransactionList({ transactions, deleteTransaction }: Transaction
   }
 
   return (
-    <Card className="shadow-lg">
+    <Card className="shadow-lg card-print transaction-list-print">
       <CardHeader className="flex flex-row items-center justify-between">
         <div>
           <CardTitle>Recent Transactions</CardTitle>
           <CardDescription>A list of your recent income and expenses.</CardDescription>
         </div>
-        <Button onClick={handleExport} variant="outline" size="sm">
+        <Button onClick={handleExport} variant="outline" size="sm" className="print-hide">
           <Download className="mr-2 h-4 w-4" />
           Export CSV
         </Button>
@@ -107,7 +107,7 @@ export function TransactionList({ transactions, deleteTransaction }: Transaction
                 <TableHead>Description</TableHead>
                 <TableHead>Category</TableHead>
                 <TableHead className="text-right">Amount</TableHead>
-                <TableHead className="text-right w-[80px]">Actions</TableHead>
+                <TableHead className="text-right w-[80px] print-hide action-column-print-hide">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -138,7 +138,7 @@ export function TransactionList({ transactions, deleteTransaction }: Transaction
                       {transaction.type === "income" ? "+" : "-"}
                       ${transaction.amount.toFixed(2)}
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right print-hide action-column-print-hide">
                        <AlertDialog>
                         <AlertDialogTrigger asChild>
                            <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive hover:bg-destructive/10">

@@ -21,7 +21,7 @@ export function BudgetSummary({ transactions }: BudgetSummaryProps) {
   const netBalance = totalIncome - totalExpenses;
 
   return (
-    <div className="grid gap-4 md:grid-cols-3">
+    <div className="grid gap-4 md:grid-cols-3 budget-summary-print card-print print-break-inside-avoid">
       <Card className="shadow-md hover:shadow-lg transition-shadow">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">Total Income</CardTitle>

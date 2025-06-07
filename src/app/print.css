@@ -1,0 +1,92 @@
+
+@media print {
+  body {
+    -webkit-print-color-adjust: exact; /* Chrome, Safari */
+    print-color-adjust: exact; /* Firefox, Edge */
+    background-color: #ffffff !important; /* Ensure white background for print */
+    color: #000000 !important; /* Ensure black text for print */
+  }
+
+  /* Hide sidebar, header, transaction form, AI insights, export/print buttons */
+  [data-sidebar="sidebar"], 
+  header,
+  [data-testid="transaction-form-card"], /* Assuming you might add a test-id for easier targeting */
+  [data-testid="ai-insights-card"],
+  .print-hide {
+    display: none !important;
+  }
+  
+  /* Ensure AppHeader within DashboardLayout is hidden for print if not already covered */
+  .dashboard-layout-header {
+    display: none !important;
+  }
+  
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .print-container {
+    padding: 1rem !important; /* Add some padding to the main content for print */
+  }
+
+  .print-w-full {
+    width: 100% !important;
+  }
+  .print-break-after {
+    page-break-after: always;
+  }
+  .print-break-before {
+    page-break-before: always;
+  }
+  .print-break-inside-avoid {
+    page-break-inside: avoid;
+  }
+
+  /* Specific adjustments for cards and charts */
+  .card-print {
+    box-shadow: none !important;
+    border: 1px solid #e0e0e0 !important; /* Light border for definition */
+    margin-bottom: 1rem; /* Space between printed cards */
+    page-break-inside: avoid;
+  }
+  
+  .chart-print-container {
+    min-height: 250px !important; /* Ensure charts have enough space */
+    height: auto !important; /* Allow charts to size based on content for print */
+    max-height: none !important;
+  }
+
+  /* Ensure recharts elements are visible and sized appropriately */
+  .recharts-responsive-container, .recharts-wrapper, .recharts-surface {
+    width: 100% !important;
+    height: 100% !important; /* Make it flexible for the container */
+  }
+
+  .transaction-list-print table {
+    width: 100% !important;
+  }
+  .transaction-list-print .action-column-print-hide {
+     display: none !important;
+  }
+
+  .budget-summary-print .grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important; /* Ensure 3 columns for summary */
+  }
+
+  /* Footer styling for print */
+  .print-footer {
+    display: block !important; /* Make sure it's visible if hidden by default */
+    text-align: center;
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 2rem;
+    border-top: 1px solid #ccc;
+    padding-top: 0.5rem;
+    width: 100%;
+    position: fixed; /* Try to fix at bottom for each page, browser dependent */
+    bottom: 0;
+  }
+}

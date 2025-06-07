@@ -25,7 +25,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
 
   return (
     <SidebarProvider defaultOpen>
-      <Sidebar collapsible="icon" className="border-r">
+      <Sidebar collapsible="icon" className="border-r print-hide">
         <SidebarHeader className="p-2 justify-center items-center group-data-[collapsible=icon]:justify-start group-data-[collapsible=icon]:px-2">
           <div className="group-data-[collapsible=icon]:hidden flex items-center justify-center w-full">
             <Logo />
@@ -56,11 +56,11 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
         </SidebarContent>
       </Sidebar>
       <SidebarInset className="flex flex-col min-h-screen">
-        <AppHeader showSidebarTrigger />
+        <AppHeader showSidebarTrigger className="print-hide dashboard-layout-header" />
         <main className="flex-1">
           {children}
         </main>
-        <footer className="py-6 text-center text-sm text-muted-foreground border-t">
+        <footer className="py-6 text-center text-sm text-muted-foreground border-t print-hide">
           © {new Date().getFullYear()} Finance Flow. All rights reserved.
         </footer>
       </SidebarInset>
