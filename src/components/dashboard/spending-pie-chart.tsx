@@ -1,9 +1,11 @@
+
 "use client"
 
 import * as React from "react"
 import { Pie, PieChart, Cell } from "recharts"
 import type { Transaction } from "@/lib/types"
-import { getCategoryColor, defaultCategories } from "@/lib/app-config"
+import { useCategories } from "@/hooks/use-categories"; // Import useCategories
+import { Shapes } from "lucide-react"; // Default icon
 
 import {
   Card,
@@ -20,12 +22,14 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart"
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface SpendingPieChartProps {
   transactions: Transaction[]
 }
 
 export function SpendingPieChart({ transactions }: SpendingPieChartProps) {
+  const { allCategories, isLoading: categoriesLoading } = useCategories();
   const expenseTransactions = transactions.filter((t) => t.type === "expense")
 
   const dataMap = new Map<string, number>()
@@ -33,23 +37,41 @@ export function SpendingPieChart({ transactions }: SpendingPieChartProps) {
     dataMap.set(t.category, (dataMap.get(t.category) || 0) + t.amount)
   })
 
-  const chartData = Array.from(dataMap.entries()).map(([category, amount]) => ({
-    name: category,
-    value: amount,
-    fill: getCategoryColor(category) || "hsl(var(--muted))",
-  }))
-  .sort((a,b) => b.value - a.value); // Sort for consistent legend and color order
+  const chartData = Array.from(dataMap.entries()).map(([categoryName, amount]) => {
+    const categoryDetails = allCategories.find(c => c.name === categoryName && c.type === 'expense');
+    return {
+      name: categoryName,
+      value: amount,
+      fill: categoryDetails?.color || "hsl(var(--muted))",
+      icon: categoryDetails?.icon || Shapes,
+    };
+  })
+  .sort((a,b) => b.value - a.value);
 
   const chartConfig = {} as ChartConfig
   chartData.forEach((item) => {
-    const categoryDetails = defaultCategories.find(c => c.name === item.name);
     chartConfig[item.name] = {
       label: item.name,
       color: item.fill,
-      icon: categoryDetails?.icon
+      icon: item.icon,
     }
   })
 
+  if (categoriesLoading) {
+    return (
+      <Card className="shadow-lg">
+        <CardHeader>
+          <CardTitle>Expense Breakdown</CardTitle>
+          <CardDescription>Distribution of expenses by category.</CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col items-center justify-center min-h-[300px]">
+          <Skeleton className="h-48 w-48 rounded-full" />
+          <Skeleton className="h-4 w-3/4 mt-4" />
+          <Skeleton className="h-4 w-1/2 mt-2" />
+        </CardContent>
+      </Card>
+    );
+  }
 
   if (expenseTransactions.length === 0) {
     return (
@@ -58,7 +80,7 @@ export function SpendingPieChart({ transactions }: SpendingPieChartProps) {
           <CardTitle>Expense Breakdown</CardTitle>
           <CardDescription>Distribution of expenses by category.</CardDescription>
         </CardHeader>
-        <CardContent className="flex items-center justify-center min-h-[250px]">
+        <CardContent className="flex items-center justify-center min-h-[300px]">
           <p className="text-muted-foreground">No expense data to display.</p>
         </CardContent>
       </Card>
@@ -87,7 +109,6 @@ export function SpendingPieChart({ transactions }: SpendingPieChartProps) {
               nameKey="name"
               innerRadius={60}
               strokeWidth={2}
-              activeIndex={0} // Allows for hover effect on first slice
             >
               {chartData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={entry.fill} />

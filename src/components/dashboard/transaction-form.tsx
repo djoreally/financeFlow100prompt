@@ -31,10 +31,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { defaultCategories } from "@/lib/app-config";
 import type { Transaction } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { useCategories } from "@/hooks/use-categories"; // Import useCategories
 
 const formSchema = z.object({
   type: z.enum(["income", "expense"], {
@@ -55,6 +55,8 @@ interface TransactionFormProps {
 
 export function TransactionForm({ addTransaction, className }: TransactionFormProps) {
   const { toast } = useToast();
+  const { allCategories, isLoading: categoriesLoading } = useCategories(); // Use categories hook
+
   const form = useForm<TransactionFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -75,17 +77,21 @@ export function TransactionForm({ addTransaction, className }: TransactionFormPr
     });
     toast({
       title: "Transaction Added",
-      description: `${data.type === 'income' ? 'Income' : 'Expense'} of $${data.amount} for ${data.category} added.`,
+      description: `${data.type === 'income' ? 'Income' : 'Expense'} of $${data.amount.toFixed(2)} for ${data.category} added.`,
     });
     form.reset();
-     // Reset with default values including date
     form.setValue("date", new Date()); 
     form.setValue("type", "expense");
   };
 
-  const filteredCategories = defaultCategories.filter(
-    (cat) => cat.type === transactionType
-  );
+  const filteredCategories = React.useMemo(() => {
+    return allCategories.filter((cat) => cat.type === transactionType);
+  }, [allCategories, transactionType]);
+
+
+  if (categoriesLoading) {
+    return <p>Loading categories...</p>; // Or a skeleton loader
+  }
 
   return (
     <Form {...form}>
@@ -100,7 +106,7 @@ export function TransactionForm({ addTransaction, className }: TransactionFormPr
                 <RadioGroup
                   onValueChange={(value) => {
                     field.onChange(value);
-                    form.setValue("category", ""); // Reset category on type change
+                    form.setValue("category", ""); 
                   }}
                   defaultValue={field.value}
                   className="flex space-x-4"
@@ -161,13 +167,13 @@ export function TransactionForm({ addTransaction, className }: TransactionFormPr
                 <FormLabel>Category</FormLabel>
                 <Select onValueChange={field.onChange} value={field.value} defaultValue={field.value}>
                   <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a category" />
+                    <SelectTrigger disabled={filteredCategories.length === 0}>
+                      <SelectValue placeholder={filteredCategories.length === 0 ? "No categories for this type" : "Select a category"} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
                     {filteredCategories.map((cat) => (
-                      <SelectItem key={cat.name} value={cat.name}>
+                      <SelectItem key={cat.id} value={cat.name}>
                         {cat.name}
                       </SelectItem>
                     ))}

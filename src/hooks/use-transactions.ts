@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react'; // Added useMemo
 import type { Transaction } from '@/lib/types';
 
 const STORAGE_KEY = 'financeFlowTransactions';
@@ -25,7 +25,9 @@ export function useTransactions() {
   useEffect(() => {
     if (!isLoading) {
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(transactions));
+        // Sort transactions by date descending before saving
+        const sortedTransactions = [...transactions].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(sortedTransactions));
       } catch (error) {
         console.error("Failed to save transactions to localStorage:", error);
       }
@@ -33,7 +35,12 @@ export function useTransactions() {
   }, [transactions, isLoading]);
 
   const addTransaction = useCallback((transaction: Omit<Transaction, 'id'>) => {
-    setTransactions(prev => [{ ...transaction, id: crypto.randomUUID() }, ...prev]);
+    setTransactions(prev => {
+        const newTransaction = { ...transaction, id: crypto.randomUUID() };
+        // Add new transaction and then re-sort
+        const updated = [newTransaction, ...prev];
+        return updated.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    });
   }, []);
 
   const deleteTransaction = useCallback((id: string) => {
@@ -41,12 +48,27 @@ export function useTransactions() {
   }, []);
 
   const updateTransaction = useCallback((updatedTransaction: Transaction) => {
-    setTransactions(prev => prev.map(t => t.id === updatedTransaction.id ? updatedTransaction : t));
+    setTransactions(prev => {
+        const updated = prev.map(t => t.id === updatedTransaction.id ? updatedTransaction : t);
+        return updated.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    });
   }, []);
   
   const getTransactionById = useCallback((id: string) => {
     return transactions.find(t => t.id === id);
   }, [transactions]);
 
-  return { transactions, addTransaction, deleteTransaction, updateTransaction, getTransactionById, isLoading };
+  // Use useMemo to sort transactions for display, ensuring list is always sorted
+  const sortedTransactions = useMemo(() => {
+    return [...transactions].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  }, [transactions]);
+
+  return { 
+    transactions: sortedTransactions, // Return sorted transactions
+    addTransaction, 
+    deleteTransaction, 
+    updateTransaction, 
+    getTransactionById, 
+    isLoading 
+  };
 }

@@ -1,10 +1,11 @@
 
 "use client";
 
+import React from "react";
 import { format } from "date-fns";
-import { Trash2, TrendingUp, TrendingDown, Edit3 } from "lucide-react";
+import { Trash2, TrendingUp, TrendingDown, Edit3, Shapes } from "lucide-react";
 import type { Transaction } from "@/lib/types";
-import { getCategoryIcon, getCategoryColor } from "@/lib/app-config";
+import { useCategories } from "@/hooks/use-categories"; // Import useCategories
 import {
   Table,
   TableBody,
@@ -36,6 +37,8 @@ interface TransactionListProps {
 }
 
 export function TransactionList({ transactions, deleteTransaction }: TransactionListProps) {
+  const { getCategoryDetails, isLoading: categoriesLoading } = useCategories();
+
   if (transactions.length === 0) {
     return (
       <Card className="shadow-lg">
@@ -45,6 +48,19 @@ export function TransactionList({ transactions, deleteTransaction }: Transaction
         </CardHeader>
         <CardContent className="flex items-center justify-center min-h-[200px] border-2 border-dashed border-muted rounded-lg">
           <p className="text-muted-foreground text-center">No transactions yet. <br/>Add one using the form to get started!</p>
+        </CardContent>
+      </Card>
+    );
+  }
+  
+  if (categoriesLoading) {
+    return (
+      <Card className="shadow-lg">
+        <CardHeader>
+          <CardTitle>Recent Transactions</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p>Loading category details...</p>
         </CardContent>
       </Card>
     );
@@ -70,8 +86,10 @@ export function TransactionList({ transactions, deleteTransaction }: Transaction
             </TableHeader>
             <TableBody>
               {transactions.map((transaction) => {
-                const Icon = getCategoryIcon(transaction.category);
-                const categoryColor = getCategoryColor(transaction.category);
+                const categoryDetails = getCategoryDetails(transaction.category, transaction.type);
+                const Icon = categoryDetails?.icon || Shapes; // Fallback icon
+                const categoryColor = categoryDetails?.color || 'hsl(var(--muted))';
+
                 return (
                   <TableRow key={transaction.id}>
                     <TableCell className="text-xs">{format(new Date(transaction.date), "MMM dd, yyyy")}</TableCell>
@@ -95,9 +113,6 @@ export function TransactionList({ transactions, deleteTransaction }: Transaction
                       ${transaction.amount.toFixed(2)}
                     </TableCell>
                     <TableCell className="text-right">
-                      {/* <Button variant="ghost" size="icon" onClick={() => onEdit(transaction)} className="mr-1 hover:text-primary">
-                        <Edit3 className="h-4 w-4" />
-                      </Button> */}
                        <AlertDialog>
                         <AlertDialogTrigger asChild>
                            <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive hover:bg-destructive/10">

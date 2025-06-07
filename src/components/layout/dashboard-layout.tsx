@@ -3,7 +3,7 @@
 
 import type { ReactNode } from 'react';
 import Link from 'next/link';
-import { Home, Settings, Briefcase } from 'lucide-react'; // Added Briefcase for logo placeholder
+import { Home, Settings, Briefcase } from 'lucide-react'; 
 import { AppHeader } from '@/components/layout/app-header';
 import { Logo } from '@/components/logo';
 import {
@@ -27,7 +27,6 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
     <SidebarProvider defaultOpen>
       <Sidebar collapsible="icon" className="border-r">
         <SidebarHeader className="p-2 justify-center items-center group-data-[collapsible=icon]:justify-start group-data-[collapsible=icon]:px-2">
-           {/* Show full logo when expanded, icon when collapsed */}
           <div className="group-data-[collapsible=icon]:hidden flex items-center justify-center w-full">
             <Logo />
           </div>
@@ -47,7 +46,7 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
             </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton asChild tooltip="Settings">
-                <Link href="/settings"> {/* This page won't exist yet */}
+                <Link href="/settings"> 
                   <Settings />
                   <span className="group-data-[collapsible=icon]:hidden">Settings</span>
                 </Link>
@@ -55,14 +54,6 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
-        {/* Optional Footer Example
-        <SidebarFooter className="p-2 justify-center group-data-[collapsible=icon]:justify-start group-data-[collapsible=icon]:px-2">
-           <Button variant="ghost" className="w-full justify-start group-data-[collapsible=icon]:w-auto group-data-[collapsible=icon]:p-2">
-            <Settings className="group-data-[collapsible=icon]:mx-auto"/>
-            <span className="group-data-[collapsible=icon]:hidden">User Settings</span>
-          </Button>
-        </SidebarFooter>
-        */}
       </Sidebar>
       <SidebarInset className="flex flex-col min-h-screen">
         <AppHeader showSidebarTrigger />
