@@ -1,3 +1,4 @@
+
 import type { Category } from '@/lib/types';
 import {
   ShoppingCart,
@@ -18,6 +19,7 @@ import {
   PiggyBank, // For Savings
   TrendingUp, // For Investments
   Wrench, // For Maintenance
+  type LucideIcon,
 } from 'lucide-react';
 
 export const defaultCategories: Category[] = [
