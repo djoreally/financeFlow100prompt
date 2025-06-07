@@ -3,7 +3,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { DashboardLayout } from "@/components/layout/dashboard-layout"; // Changed
+import { DashboardLayout } from "@/components/layout/dashboard-layout"; 
 import { TransactionForm } from "@/components/dashboard/transaction-form";
 import { TransactionList } from "@/components/dashboard/transaction-list";
 import { BudgetSummary } from "@/components/dashboard/budget-summary";
@@ -14,7 +14,7 @@ import { useTransactions } from "@/hooks/use-transactions";
 import { useAuth } from "@/contexts/auth-context";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AppHeader } from "@/components/layout/app-header"; // Keep for pre-auth skeleton
+import { AppHeader } from "@/components/layout/app-header"; 
 
 export default function DashboardPage() {
   const { user, loading: authLoading } = useAuth();
@@ -30,7 +30,7 @@ export default function DashboardPage() {
   if (authLoading || (!user && !authLoading)) {
     return (
       <>
-        <AppHeader /> {/* Use AppHeader for non-dashboard layout skeleton */}
+        <AppHeader /> 
         <div className="flex-1 container mx-auto p-4 md:p-6 space-y-6 mt-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Skeleton className="h-20 w-full" />
@@ -51,8 +51,6 @@ export default function DashboardPage() {
     );
   }
   
-  // At this point, user is authenticated. Now check transactions loading.
-  // This skeleton will be inside DashboardLayout if transactions are loading
   if (transactionsLoading) {
     return (
       <DashboardLayout>
@@ -81,7 +79,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <DashboardLayout> {/* Wrap content with DashboardLayout */}
+    <DashboardLayout> 
       <div className="container mx-auto p-4 md:p-6 space-y-8">
         <BudgetSummary transactions={transactions} />
 
