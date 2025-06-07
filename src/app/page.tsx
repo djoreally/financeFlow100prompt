@@ -90,7 +90,7 @@ export default function DashboardPage() {
     <DashboardLayout> 
       <div className="container mx-auto p-4 md:p-6 space-y-8 print-container">
         <div className="flex justify-between items-center print-hide">
-          <h1 className="text-3xl font-bold">Dashboard Overview</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">Dashboard Overview</h1>
           <Button onClick={handlePrint} variant="outline" size="sm">
             <Printer className="mr-2 h-4 w-4" />
             Print Report
@@ -129,3 +129,4 @@ export default function DashboardPage() {
     </DashboardLayout>
   );
 }
+
