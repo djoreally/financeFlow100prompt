@@ -3,9 +3,10 @@
 
 import React from "react";
 import { format } from "date-fns";
-import { Trash2, TrendingUp, TrendingDown, Edit3, Shapes } from "lucide-react";
+import { Trash2, TrendingUp, TrendingDown, Edit3, Shapes, Download } from "lucide-react";
 import type { Transaction } from "@/lib/types";
 import { useCategories } from "@/hooks/use-categories"; // Import useCategories
+import { exportTransactionsToCsv } from "@/lib/utils";
 import {
   Table,
   TableBody,
@@ -29,6 +30,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useToast } from "@/hooks/use-toast";
 
 interface TransactionListProps {
   transactions: Transaction[];
@@ -38,6 +40,24 @@ interface TransactionListProps {
 
 export function TransactionList({ transactions, deleteTransaction }: TransactionListProps) {
   const { getCategoryDetails, isLoading: categoriesLoading } = useCategories();
+  const { toast } = useToast();
+
+  const handleExport = () => {
+    if (transactions.length === 0) {
+      toast({
+        title: "No Transactions",
+        description: "There are no transactions to export.",
+        variant: "default" 
+      });
+      return;
+    }
+    const filename = `transactions_${format(new Date(), "yyyy-MM-dd")}.csv`;
+    exportTransactionsToCsv(filename, transactions);
+    toast({
+      title: "Export Successful",
+      description: `Transactions exported to ${filename}`,
+    });
+  };
 
   if (transactions.length === 0) {
     return (
@@ -68,9 +88,15 @@ export function TransactionList({ transactions, deleteTransaction }: Transaction
 
   return (
     <Card className="shadow-lg">
-      <CardHeader>
-        <CardTitle>Recent Transactions</CardTitle>
-        <CardDescription>A list of your recent income and expenses.</CardDescription>
+      <CardHeader className="flex flex-row items-center justify-between">
+        <div>
+          <CardTitle>Recent Transactions</CardTitle>
+          <CardDescription>A list of your recent income and expenses.</CardDescription>
+        </div>
+        <Button onClick={handleExport} variant="outline" size="sm">
+          <Download className="mr-2 h-4 w-4" />
+          Export CSV
+        </Button>
       </CardHeader>
       <CardContent>
         <ScrollArea className="h-[400px] md:h-[500px] border rounded-md">
