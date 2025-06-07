@@ -25,7 +25,7 @@ export default function SettingsPage() {
     return (
       <>
         <AppHeader /> 
-        <div className="flex-1 container mx-auto p-4 md:p-6 space-y-6 mt-4">
+        <div className="flex-1 container mx-auto space-y-6 mt-4">
           <Skeleton className="h-12 w-1/3 mb-6" />
           <Skeleton className="h-64 w-full mb-6" />
           <Skeleton className="h-64 w-full" />
@@ -36,7 +36,7 @@ export default function SettingsPage() {
 
   return (
     <DashboardLayout> 
-      <div className="container mx-auto p-4 md:p-6 space-y-8">
+      <div className="container mx-auto space-y-8">
         <h1 className="text-3xl font-bold">Settings</h1>
         
         <CategoryManager />

@@ -38,7 +38,7 @@ export default function DashboardPage() {
     return (
       <>
         <AppHeader /> 
-        <div className="flex-1 container mx-auto p-4 md:p-6 space-y-6 mt-4 print-hide">
+        <div className="flex-1 container mx-auto space-y-6 mt-4 print-hide">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Skeleton className="h-20 w-full" />
             <Skeleton className="h-20 w-full" />
@@ -61,7 +61,7 @@ export default function DashboardPage() {
   if (transactionsLoading) { 
     return (
       <DashboardLayout>
-        <div className="container mx-auto p-4 md:p-6 space-y-6 print-hide">
+        <div className="container mx-auto space-y-6 print-hide">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <Skeleton className="h-20 w-full" />
             <Skeleton className="h-20 w-full" />
@@ -88,7 +88,7 @@ export default function DashboardPage() {
 
   return (
     <DashboardLayout> 
-      <div className="container mx-auto p-4 md:p-6 space-y-8 print-container">
+      <div className="container mx-auto space-y-8 print-container">
         <div className="flex justify-between items-center print-hide">
           <h1 className="text-2xl sm:text-3xl font-bold">Dashboard Overview</h1>
           <Button onClick={handlePrint} variant="outline" size="sm">
@@ -129,4 +129,3 @@ export default function DashboardPage() {
     </DashboardLayout>
   );
 }
-
