@@ -1,5 +1,8 @@
+
 "use client";
 
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { AppHeader } from "@/components/layout/app-header";
 import { TransactionForm } from "@/components/dashboard/transaction-form";
 import { TransactionList } from "@/components/dashboard/transaction-list";
@@ -8,13 +11,23 @@ import { SpendingPieChart } from "@/components/dashboard/spending-pie-chart";
 import { IncomeExpenseBarChart } from "@/components/dashboard/income-expense-bar-chart";
 import { AIInsightsSection } from "@/components/dashboard/ai-insights-section";
 import { useTransactions } from "@/hooks/use-transactions";
+import { useAuth } from "@/contexts/auth-context";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function DashboardPage() {
-  const { transactions, addTransaction, deleteTransaction, isLoading } = useTransactions();
+  const { user, loading: authLoading } = useAuth();
+  const { transactions, addTransaction, deleteTransaction, isLoading: transactionsLoading } = useTransactions();
+  const router = useRouter();
 
-  if (isLoading) {
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.replace('/login');
+    }
+  }, [user, authLoading, router]);
+
+  if (authLoading || (!user && !authLoading)) {
+    // Show a simplified full-page skeleton if auth is loading or redirect is imminent
     return (
       <>
         <AppHeader />
@@ -24,16 +37,43 @@ export default function DashboardPage() {
             <Skeleton className="h-20 w-full" />
             <Skeleton className="h-20 w-full" />
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <Skeleton className="h-96 w-full" />
+           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-1 space-y-6">
               <Skeleton className="h-96 w-full" />
-              <Skeleton className="h-64 w-full" />
             </div>
             <div className="lg:col-span-2 space-y-6">
               <Skeleton className="h-[600px] w-full" />
+            </div>
+          </div>
+        </main>
+      </>
+    );
+  }
+  
+  // At this point, user is authenticated. Now check transactions loading.
+  if (transactionsLoading) {
+    return (
+      <>
+        <AppHeader />
+        <main className="flex-1 container mx-auto p-4 md:p-6 space-y-6">
+          {/* BudgetSummary Skeletons */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <Skeleton className="h-20 w-full" />
+            <Skeleton className="h-20 w-full" />
+            <Skeleton className="h-20 w-full" />
+          </div>
+          {/* Main content grid skeletons */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-1 space-y-6">
+              <Skeleton className="h-96 w-full" /> {/* TransactionForm Skeleton */}
+              <Skeleton className="h-64 w-full" /> {/* AIInsights Skeleton */}
+            </div>
+            <div className="lg:col-span-2 space-y-6">
+              <Skeleton className="h-[600px] w-full" /> {/* TransactionList Skeleton */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Skeleton className="h-80 w-full" />
-                <Skeleton className="h-80 w-full" />
+                <Skeleton className="h-80 w-full" /> {/* SpendingPieChart Skeleton */}
+                <Skeleton className="h-80 w-full" /> {/* IncomeExpenseBarChart Skeleton */}
               </div>
             </div>
           </div>
@@ -50,7 +90,6 @@ export default function DashboardPage() {
           <BudgetSummary transactions={transactions} />
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-            {/* Left Column: Forms & AI */}
             <div className="lg:col-span-1 space-y-6">
               <Card className="shadow-lg">
                 <CardHeader>
@@ -64,7 +103,6 @@ export default function DashboardPage() {
               <AIInsightsSection transactions={transactions} />
             </div>
 
-            {/* Right Column: Transaction List & Charts */}
             <div className="lg:col-span-2 space-y-6">
               <TransactionList transactions={transactions} deleteTransaction={deleteTransaction} />
               
