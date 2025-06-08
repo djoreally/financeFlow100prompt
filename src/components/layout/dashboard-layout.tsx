@@ -3,7 +3,7 @@
 
 import type { ReactNode } from 'react';
 import Link from 'next/link';
-import { Home, Settings, Briefcase } from 'lucide-react'; 
+import { Home, Settings, Briefcase, LogOut, UserCircle } from 'lucide-react'; 
 import { AppHeader } from '@/components/layout/app-header';
 import { Logo } from '@/components/logo';
 import {
@@ -17,11 +17,13 @@ import {
   SidebarProvider,
   SidebarFooter,
 } from '@/components/ui/sidebar';
-// Removed: import { useAuth } from '@/contexts/auth-context';
+import { useAuth } from '@/contexts/mock-auth-context';
 import { Button } from '../ui/button';
+import { Avatar, AvatarFallback } from '../ui/avatar';
+import { Skeleton } from '../ui/skeleton';
 
 export function DashboardLayout({ children }: { children: ReactNode }) {
-  // Removed: const { user } = useAuth();
+  const { user, isLoading, logOut } = useAuth();
 
   return (
     <SidebarProvider defaultOpen>
@@ -54,6 +56,33 @@ export function DashboardLayout({ children }: { children: ReactNode }) {
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarContent>
+        <SidebarFooter className="p-2 border-t">
+          {isLoading && (
+            <div className="flex items-center gap-2 group-data-[collapsible=icon]:justify-center">
+              <Skeleton className="h-8 w-8 rounded-full" />
+              <Skeleton className="h-6 w-20 group-data-[collapsible=icon]:hidden" />
+            </div>
+          )}
+          {!isLoading && user && (
+            <div className="flex flex-col items-start gap-2 group-data-[collapsible=icon]:items-center">
+                <div className="flex items-center gap-2 group-data-[collapsible=icon]:justify-center w-full">
+                    <Avatar className="h-8 w-8">
+                         <AvatarFallback className="bg-muted text-muted-foreground text-xs">
+                           {user.username ? user.username.charAt(0).toUpperCase() : <UserCircle size={16}/>}
+                        </AvatarFallback>
+                    </Avatar>
+                    <div className="flex flex-col group-data-[collapsible=icon]:hidden">
+                        <span className="text-sm font-medium truncate">{user.username}</span>
+                        <span className="text-xs text-muted-foreground truncate">{user.email}</span>
+                    </div>
+                </div>
+                 <Button variant="ghost" size="sm" onClick={logOut} className="w-full justify-start group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:aspect-square group-data-[collapsible=icon]:p-0">
+                    <LogOut className="h-4 w-4 group-data-[collapsible=icon]:m-0 group-data-[collapsible=icon]:h-5 group-data-[collapsible=icon]:w-5" />
+                    <span className="group-data-[collapsible=icon]:hidden ml-2">Logout</span>
+                 </Button>
+            </div>
+          )}
+        </SidebarFooter>
       </Sidebar>
       <SidebarInset className="flex flex-col min-h-screen">
         <AppHeader showSidebarTrigger className="print-hide dashboard-layout-header" />

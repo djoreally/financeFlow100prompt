@@ -1,8 +1,9 @@
 
 import type {Metadata} from 'next';
 import './globals.css';
-import './print.css'; // Added print stylesheet
+import './print.css';
 import { Toaster } from "@/components/ui/toaster";
+import { MockAuthProvider } from '@/contexts/mock-auth-context'; // Added MockAuthProvider
 
 export const metadata: Metadata = {
   title: 'Finance Flow',
@@ -22,8 +23,10 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased min-h-screen bg-background flex flex-col">
-        {children}
-        <Toaster />
+        <MockAuthProvider> {/* Wrapped children with MockAuthProvider */}
+          {children}
+          <Toaster />
+        </MockAuthProvider>
       </body>
     </html>
   );
