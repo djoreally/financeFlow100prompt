@@ -6,7 +6,7 @@ import { useForm } from "react-hook-form";
 import * as z from "zod";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { LogIn as LogInIcon, Mail, Lock } from "lucide-react";
+import { LogIn as LogInIcon, Mail, Lock, UserCheck } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -22,6 +22,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useAuth } from "@/contexts/auth-context";
 import { AppHeader } from "@/components/layout/app-header";
 import { useState, useEffect } from "react";
+import { Separator } from "@/components/ui/separator";
 
 const formSchema = z.object({
   email: z.string().email("Invalid email address.").min(1, "Email is required."),
@@ -30,10 +31,14 @@ const formSchema = z.object({
 
 type LoginFormValues = z.infer<typeof formSchema>;
 
+const DEMO_USER_EMAIL = "demo@example.com";
+const DEMO_USER_PASSWORD = "password123";
+
 export default function LoginPage() {
   const { logIn, loading: authLoading, user } = useAuth();
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDemoSubmitting, setIsDemoSubmitting] = useState(false);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(formSchema),
@@ -55,6 +60,13 @@ export default function LoginPage() {
     await logIn(data.email, data.password);
     setIsSubmitting(false);
     // Redirection is handled by logIn method or useEffect
+  };
+
+  const handleDemoLogin = async () => {
+    setIsDemoSubmitting(true);
+    await logIn(DEMO_USER_EMAIL, DEMO_USER_PASSWORD);
+    setIsDemoSubmitting(false);
+     // Redirection is handled by logIn method or useEffect
   };
   
   if (authLoading || user) {
@@ -107,13 +119,29 @@ export default function LoginPage() {
                     </FormItem>
                   )}
                 />
-                <Button type="submit" className="w-full" disabled={isSubmitting || authLoading}>
+                <Button type="submit" className="w-full" disabled={isSubmitting || authLoading || isDemoSubmitting}>
                   {isSubmitting ? "Logging In..." : "Log In"}
                 </Button>
               </form>
             </Form>
+            <Separator className="my-6" />
+            <div className="space-y-3 text-center">
+                <p className="text-sm text-muted-foreground">Or try with a demo account:</p>
+                <Button 
+                    variant="outline" 
+                    className="w-full" 
+                    onClick={handleDemoLogin}
+                    disabled={isDemoSubmitting || authLoading || isSubmitting}
+                >
+                    <UserCheck className="mr-2 h-4 w-4" /> 
+                    {isDemoSubmitting ? "Logging in as Demo..." : "Log in as Demo User"}
+                </Button>
+                <p className="text-xs text-muted-foreground">
+                    (Email: {DEMO_USER_EMAIL}, Password: {DEMO_USER_PASSWORD})
+                </p>
+            </div>
           </CardContent>
-          <CardFooter className="flex justify-center">
+          <CardFooter className="flex justify-center pt-6">
             <p className="text-sm text-muted-foreground">
               Don&apos;t have an account?{" "}
               <Link href="/signup" className="font-medium text-primary hover:underline">
