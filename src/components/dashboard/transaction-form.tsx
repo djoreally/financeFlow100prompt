@@ -1,6 +1,7 @@
 
 "use client";
 
+import React from "react"; // Added this line
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -80,7 +81,7 @@ export function TransactionForm({ addTransaction, className }: TransactionFormPr
       description: `${data.type === 'income' ? 'Income' : 'Expense'} of $${data.amount.toFixed(2)} for ${data.category} added.`,
     });
     form.reset();
-    form.setValue("date", new Date()); 
+    form.setValue("date", new Date());
     form.setValue("type", "expense");
   };
 
@@ -106,7 +107,7 @@ export function TransactionForm({ addTransaction, className }: TransactionFormPr
                 <RadioGroup
                   onValueChange={(value) => {
                     field.onChange(value);
-                    form.setValue("category", ""); 
+                    form.setValue("category", "");
                   }}
                   defaultValue={field.value}
                   className="flex space-x-4"
@@ -184,7 +185,7 @@ export function TransactionForm({ addTransaction, className }: TransactionFormPr
             )}
           />
         </div>
-        
+
         <FormField
           control={form.control}
           name="date"
@@ -226,7 +227,7 @@ export function TransactionForm({ addTransaction, className }: TransactionFormPr
             </FormItem>
           )}
         />
-        
+
         <Button type="submit" className="w-full">
           <PlusCircle className="mr-2 h-4 w-4" /> Add Transaction
         </Button>
