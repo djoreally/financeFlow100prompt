@@ -17,11 +17,11 @@ import {
   SidebarProvider,
   SidebarFooter,
 } from '@/components/ui/sidebar';
-import { useAuth } from '@/contexts/auth-context';
+// Removed: import { useAuth } from '@/contexts/auth-context';
 import { Button } from '../ui/button';
 
 export function DashboardLayout({ children }: { children: ReactNode }) {
-  const { user } = useAuth();
+  // Removed: const { user } = useAuth();
 
   return (
     <SidebarProvider defaultOpen>

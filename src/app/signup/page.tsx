@@ -1,9 +1,20 @@
 
+"use client";
+
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { AppHeader } from "@/components/layout/app-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { UserPlus } from "lucide-react";
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function SignupPage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace('/'); // Redirect to the main page
+  }, [router]);
+
   return (
     <div className="flex flex-col min-h-screen">
       <AppHeader />
@@ -12,14 +23,13 @@ export default function SignupPage() {
           <CardHeader>
             <CardTitle className="text-3xl font-bold flex items-center gap-2">
               <UserPlus className="h-8 w-8 text-primary" />
-              Sign Up
+              Redirecting...
             </CardTitle>
-            <CardDescription>Authentication functionality has been removed from this application.</CardDescription>
+            <CardDescription>Authentication has been removed. You are being redirected to the main application.</CardDescription>
           </CardHeader>
-          <CardContent>
-            <p className="text-center text-muted-foreground">
-              This page is no longer active.
-            </p>
+          <CardContent className="flex flex-col items-center space-y-4 pt-6">
+            <Skeleton className="h-8 w-3/4" />
+            <Skeleton className="h-4 w-1/2" />
           </CardContent>
         </Card>
       </main>
