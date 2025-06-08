@@ -7,10 +7,11 @@
     color: #000000 !important; /* Ensure black text for print */
   }
 
-  /* Hide sidebar, header, transaction form, AI insights, export/print buttons */
+  /* Hide sidebar, header, transaction form, AI insights, statement upload, export/print buttons */
   [data-sidebar="sidebar"], 
   header,
-  [data-testid="transaction-form-card"], /* Assuming you might add a test-id for easier targeting */
+  [data-testid="transaction-form-card"],
+  [data-testid="statement-upload-form-card"], /* Added to hide statement upload */
   [data-testid="ai-insights-card"],
   .print-hide {
     display: none !important;

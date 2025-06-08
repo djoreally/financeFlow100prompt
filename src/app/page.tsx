@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { Printer } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/dashboard-layout"; 
 import { TransactionForm } from "@/components/dashboard/transaction-form";
+import { StatementUploadForm } from "@/components/dashboard/statement-upload-form"; // Added import
 import { TransactionList } from "@/components/dashboard/transaction-list";
 import { BudgetSummary } from "@/components/dashboard/budget-summary";
 import { SpendingPieChart } from "@/components/dashboard/spending-pie-chart";
@@ -17,6 +18,8 @@ import { useAuth } from '@/contexts/mock-auth-context';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
+import { Separator } from '@/components/ui/separator';
+
 
 export default function DashboardPage() {
   const { transactions, addTransaction, deleteTransaction, isLoading: transactionsLoading } = useTransactions();
@@ -49,6 +52,7 @@ export default function DashboardPage() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
             <div className="lg:col-span-1 space-y-6">
               <Skeleton className="h-96 w-full rounded-lg" />  {/* TransactionForm Card Skeleton */}
+              <Skeleton className="h-80 w-full rounded-lg" />  {/* StatementUploadForm Card Skeleton */}
               <Skeleton className="h-72 w-full rounded-lg" />  {/* AIInsightsSection Card Skeleton */}
             </div>
             <div className="lg:col-span-2 space-y-6">
@@ -83,12 +87,15 @@ export default function DashboardPage() {
             <Card className="shadow-lg" data-testid="transaction-form-card">
               <CardHeader>
                 <CardTitle>Add New Transaction</CardTitle>
-                <CardDescription>Log your income or expenses.</CardDescription>
+                <CardDescription>Log your income or expenses manually.</CardDescription>
               </CardHeader>
               <CardContent>
                 <TransactionForm addTransaction={addTransaction} />
               </CardContent>
             </Card>
+            
+            <StatementUploadForm />
+            
             <AIInsightsSection transactions={transactions} data-testid="ai-insights-card"/>
           </div>
 
